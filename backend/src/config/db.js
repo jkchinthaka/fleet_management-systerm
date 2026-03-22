@@ -16,6 +16,22 @@ const connectOptions = {
 
 export const isDbConnected = () => mongoose.connection.readyState === 1;
 
+export const waitForDbConnection = async (timeoutMs = 8000, pollMs = 250) => {
+  if (isDbConnected()) {
+    return true;
+  }
+
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    if (isDbConnected()) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, pollMs));
+  }
+
+  return isDbConnected();
+};
+
 const scheduleReconnect = () => {
   if (reconnectTimer) return;
   reconnectTimer = setTimeout(async () => {

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
+import { waitForDbConnection } from '../config/db.js';
 import { MongoUser } from '../models/mongoUserModel.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getNextSequence } from '../utils/autoIncrement.js';
@@ -21,9 +22,12 @@ const normalizeEmail = (email) => email.trim().toLowerCase();
 
 export const mongoAuthService = {
   async register(payload) {
-    const mongoose = (await import('mongoose')).default;
-    if (mongoose.connection.readyState !== 1) {
-      throw new ApiError(503, 'Authentication service is temporarily unavailable. Please try again in a moment.');
+    const connected = await waitForDbConnection(8000);
+    if (!connected) {
+      throw new ApiError(
+        503,
+        'Authentication service is temporarily unavailable. Database connection is not ready; check Atlas network access and try again.'
+      );
     }
 
     const email = normalizeEmail(payload.email);
@@ -50,9 +54,12 @@ export const mongoAuthService = {
   },
 
   async login(payload) {
-    const mongoose = (await import('mongoose')).default;
-    if (mongoose.connection.readyState !== 1) {
-      throw new ApiError(503, 'Authentication service is temporarily unavailable. Please try again in a moment.');
+    const connected = await waitForDbConnection(8000);
+    if (!connected) {
+      throw new ApiError(
+        503,
+        'Authentication service is temporarily unavailable. Database connection is not ready; check Atlas network access and try again.'
+      );
     }
     const email = normalizeEmail(payload.email);
     const user = await MongoUser.findOne({ email }).select('+password');
