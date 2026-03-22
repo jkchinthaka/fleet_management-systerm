@@ -4,10 +4,14 @@ import { connectDB } from './config/db.js';
 import { logger } from './config/logger.js';
 
 const start = async () => {
-  await connectDB();
   app.listen(env.port, () => {
     logger.info(`Server running on port ${env.port}`);
   });
+
+  const connected = await connectDB();
+  if (!connected) {
+    logger.warn('Server started without database connection. Background retries are active.');
+  }
 };
 
 start().catch((error) => {
