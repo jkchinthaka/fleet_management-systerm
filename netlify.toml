@@ -2,6 +2,9 @@
 command = "npm --prefix frontend install && npm --prefix frontend run build"
 publish = "frontend/dist"
 
+[build.environment]
+VITE_API_BASE_URL = "/api/v1"
+
 [[redirects]]
 from = "/api/*"
 to = "https://fleet-backend.onrender.com/api/:splat"

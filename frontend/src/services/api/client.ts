@@ -4,7 +4,6 @@ import { useAppStore } from '../../store/appStore';
 const resolveBaseUrl = () => {
   const envBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
   if (envBaseUrl) return envBaseUrl;
-  console.warn('VITE_API_BASE_URL is not set. Falling back to /api/v1.');
   return '/api/v1';
 };
 
