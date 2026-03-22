@@ -1,7 +1,19 @@
 import axios from 'axios';
 import { useAppStore } from '../../store/appStore';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1';
+const resolveBaseUrl = () => {
+  const envBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+  if (envBaseUrl) return envBaseUrl;
+
+  if (import.meta.env.DEV) {
+    return 'http://localhost:4000/api/v1';
+  }
+
+  console.warn('VITE_API_BASE_URL is not set for production. Falling back to /api/v1.');
+  return '/api/v1';
+};
+
+const baseURL = resolveBaseUrl();
 
 export const apiClient = axios.create({
   baseURL,
