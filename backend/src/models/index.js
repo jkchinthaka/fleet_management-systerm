@@ -1,0 +1,24 @@
+﻿// Mongoose model exports  all collections now on MongoDB Atlas
+export { Vehicle } from './vehicleModel.js';
+export { FuelLog } from './fuelLogModel.js';
+export { Supplier } from './supplierModel.js';
+export { Product } from './productModel.js';
+export { PurchaseOrder } from './purchaseOrderModel.js';
+export { PurchaseOrderItem } from './purchaseOrderItemModel.js';
+export { StockMovement } from './stockMovementModel.js';
+export { Grn } from './grnModel.js';
+export { GrnItem } from './grnItemModel.js';
+export { ServiceRequest } from './serviceRequestModel.js';
+export { ServiceTask } from './serviceTaskModel.js';
+export { ServiceSparePart } from './serviceSparePartModel.js';
+export { Machine } from './machineModel.js';
+export { MachineServiceHistory } from './machineServiceHistoryModel.js';
+export { MachineMaintenanceSchedule } from './machineMaintenanceScheduleModel.js';
+export { Asset } from './assetModel.js';
+export { Attendance } from './attendanceModel.js';
+export { ElectricityData } from './electricityModel.js';
+export { WaterMeterData } from './waterMeterModel.js';
+export { AlertThreshold } from './alertThresholdModel.js';
+export { VehicleDocument } from './vehicleDocumentModel.js';
+export { Notification } from './notificationModel.js';
+export { SavedReportFilter } from './savedReportFilterModel.js';

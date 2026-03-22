@@ -1,0 +1,34 @@
+import { Router } from 'express';
+import authRoutes from './authRoutes.js';
+import mongoAuthRoutes from './mongoAuthRoutes.js';
+import dashboardRoutes from './dashboardRoutes.js';
+import vehicleRoutes from './vehicleRoutes.js';
+import fuelRoutes from './fuelRoutes.js';
+import serviceRoutes from './serviceRoutes.js';
+import utilityRoutes from './utilityRoutes.js';
+import inventoryRoutes from './inventoryRoutes.js';
+import machineAssetRoutes from './machineAssetRoutes.js';
+import attendanceRoutes from './attendanceRoutes.js';
+import notificationRoutes from './notificationRoutes.js';
+import mongoUserRoutes from './mongoUserRoutes.js';
+import rbacRoutes from './rbacRoutes.js';
+import reportsRoutes from './reportsRoutes.js';
+
+export const buildRoutes = (apiPrefix) => {
+  const router = Router();
+  router.use(`${apiPrefix}/auth`, authRoutes);
+  router.use(`${apiPrefix}/auth-mongo`, mongoAuthRoutes);
+  router.use(`${apiPrefix}/dashboard`, dashboardRoutes);
+  router.use(`${apiPrefix}/vehicles`, vehicleRoutes);
+  router.use(`${apiPrefix}/fuel`, fuelRoutes);
+  router.use(`${apiPrefix}/service`, serviceRoutes);
+  router.use(`${apiPrefix}/utility`, utilityRoutes);
+  router.use(`${apiPrefix}/inventory`, inventoryRoutes);
+  router.use(`${apiPrefix}/machine-asset`, machineAssetRoutes);
+  router.use(`${apiPrefix}/attendance`, attendanceRoutes);
+  router.use(`${apiPrefix}/notifications`, notificationRoutes);
+  router.use(`${apiPrefix}/users`, mongoUserRoutes);
+  router.use(`${apiPrefix}/rbac`, rbacRoutes);
+  router.use(`${apiPrefix}/reports`, reportsRoutes);
+  return router;
+};
