@@ -4,7 +4,7 @@ dotenv.config();
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const jwtSecretRaw = process.env.JWT_SECRET || 'unsafe_default_change_me';
-const mongoUriFallback = 'mongodb+srv://fleetAdmin:Fleet123!@cluster0.gsqzhij.mongodb.net/?appName=Cluster0';
+const mongoUriFallback = 'mongodb+srv://fleetAdmin:Fleet123%21@cluster0.gsqzhij.mongodb.net/Fleet_New?retryWrites=true&w=majority&appName=Cluster0';
 const mongoUri =
   process.env.MONGODB_URI ||
   process.env.MONGO_URI ||
