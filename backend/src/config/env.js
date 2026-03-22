@@ -4,10 +4,18 @@ dotenv.config();
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const jwtSecretRaw = process.env.JWT_SECRET || 'unsafe_default_change_me';
-const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || '';
+const mongoUri =
+  process.env.MONGODB_URI ||
+  process.env.MONGO_URI ||
+  process.env.MONGODB_URL ||
+  process.env.MONGO_URL ||
+  process.env.DATABASE_URL ||
+  '';
 
 if (!mongoUri) {
-  throw new Error('Missing MONGODB_URI (or MONGO_URI) environment variable');
+  throw new Error(
+    'Missing Mongo URI. Set one of: MONGODB_URI, MONGO_URI, MONGODB_URL, MONGO_URL, or DATABASE_URL'
+  );
 }
 
 const hasWeakJwtSecret = jwtSecretRaw === 'unsafe_default_change_me' || jwtSecretRaw === 'replace_with_long_secret';
