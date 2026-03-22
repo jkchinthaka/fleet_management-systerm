@@ -13,6 +13,7 @@ const allowedOrigins = env.corsOrigin
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
+const apiPrefixes = Array.from(new Set([env.apiPrefix, '/api/v1', '/api']));
 
 app.use(helmet());
 app.use(
@@ -46,7 +47,9 @@ app.get('/health', (_req, res) => {
   });
 });
 
-app.use(buildRoutes(env.apiPrefix));
+apiPrefixes.forEach((prefix) => {
+  app.use(buildRoutes(prefix));
+});
 
 app.use(notFoundHandler);
 app.use(errorHandler);
