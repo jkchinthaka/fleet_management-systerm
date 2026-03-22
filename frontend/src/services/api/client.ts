@@ -4,12 +4,7 @@ import { useAppStore } from '../../store/appStore';
 const resolveBaseUrl = () => {
   const envBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
   if (envBaseUrl) return envBaseUrl;
-
-  if (import.meta.env.DEV) {
-    return 'http://localhost:4000/api/v1';
-  }
-
-  console.warn('VITE_API_BASE_URL is not set for production. Falling back to /api/v1.');
+  console.warn('VITE_API_BASE_URL is not set. Falling back to /api/v1.');
   return '/api/v1';
 };
 
