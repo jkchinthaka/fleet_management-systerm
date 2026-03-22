@@ -1,9 +1,17 @@
 import axios from 'axios';
 import { useAppStore } from '../../store/appStore';
 
+const isLocalhostApi = (url: string) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(url);
+
 const resolveBaseUrl = () => {
   const envBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
-  if (envBaseUrl) return envBaseUrl;
+  if (envBaseUrl) {
+    if (!import.meta.env.DEV && isLocalhostApi(envBaseUrl)) {
+      console.warn('Ignoring localhost VITE_API_BASE_URL in production. Falling back to /api/v1.');
+      return '/api/v1';
+    }
+    return envBaseUrl;
+  }
   return '/api/v1';
 };
 
