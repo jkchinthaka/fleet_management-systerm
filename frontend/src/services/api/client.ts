@@ -12,6 +12,11 @@ const resolveBaseUrl = () => {
     }
     return envBaseUrl;
   }
+
+  if (!import.meta.env.DEV) {
+    console.warn('VITE_API_BASE_URL is not set in production. Configure it to your deployed backend, e.g. https://your-backend-domain/api/v1');
+  }
+
   return '/api/v1';
 };
 
