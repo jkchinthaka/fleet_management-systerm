@@ -53,12 +53,18 @@ export const LoginPage = () => {
               {serverError}
             </div>
           )}
-          <Input placeholder="Email" {...form.register('email')} />
+          <Input
+            type="email"
+            placeholder="Email"
+            autoComplete="email"
+            {...form.register('email')}
+          />
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
               placeholder="Password"
               className="pr-10"
+              autoComplete="current-password"
               {...form.register('password')}
             />
             <button

@@ -85,19 +85,19 @@ export const UsersPage = () => {
         <form onSubmit={submit} className="space-y-3">
           <div>
             <label className="mb-1 block text-xs text-slate-500">Full Name</label>
-            <Input placeholder="Full name" {...form.register('name')} />
+            <Input placeholder="Full name" autoComplete="name" {...form.register('name')} />
             {form.formState.errors.name && <p className="mt-1 text-xs text-red-500">{form.formState.errors.name.message}</p>}
           </div>
 
           <div>
             <label className="mb-1 block text-xs text-slate-500">Email</label>
-            <Input type="email" placeholder="user@company.com" {...form.register('email')} />
+            <Input type="email" placeholder="user@company.com" autoComplete="email" {...form.register('email')} />
             {form.formState.errors.email && <p className="mt-1 text-xs text-red-500">{form.formState.errors.email.message}</p>}
           </div>
 
           <div>
             <label className="mb-1 block text-xs text-slate-500">Password</label>
-            <Input type="password" placeholder="Strong password" {...form.register('password')} />
+            <Input type="password" placeholder="Strong password" autoComplete="new-password" {...form.register('password')} />
             {form.formState.errors.password && <p className="mt-1 text-xs text-red-500">{form.formState.errors.password.message}</p>}
           </div>
 
