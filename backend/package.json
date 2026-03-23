@@ -9,7 +9,9 @@
     "seed:dev-users": "node src/scripts/seedDevUsers.js",
     "dev:seed-users": "npm run seed:dev-users && npm run dev",
     "mongo:init": "node src/scripts/initMongoCollections.js",
-    "mongo:seed": "node src/scripts/seedAllMongo.js"
+    "mongo:seed": "node src/scripts/seedAllMongo.js",
+    "backup:mongo-to-sql": "node src/scripts/backupMongoToSqlServer.js",
+    "sql:provision-nelna-user": "node src/scripts/provisionNelnaSqlUser.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
