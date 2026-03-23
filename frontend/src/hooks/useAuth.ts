@@ -7,6 +7,28 @@ export const useAuth = () => {
   const setSession = useAppStore((s) => s.setSession);
   const push = useToastStore((s) => s.push);
 
+  const getErrorMessage = (error: unknown) => {
+    const axiosLike = error as {
+      code?: string;
+      message?: string;
+      response?: { data?: { message?: string } };
+    };
+
+    if (axiosLike?.response?.data?.message) {
+      return axiosLike.response.data.message;
+    }
+
+    if (axiosLike?.code === 'ECONNABORTED') {
+      return 'Request timed out. Please try again.';
+    }
+
+    if (axiosLike?.message === 'Network Error') {
+      return 'Unable to reach server. Check backend URL, CORS, and internet connection.';
+    }
+
+    return 'Login failed. Please try again.';
+  };
+
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
@@ -14,9 +36,7 @@ export const useAuth = () => {
       push({ type: 'success', title: 'Login successful' });
     },
     onError: (error: unknown) => {
-      const msg =
-        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Login failed. Please try again.';
+      const msg = getErrorMessage(error);
       push({ type: 'error', title: msg });
     }
   });

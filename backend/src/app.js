@@ -15,10 +15,28 @@ const allowedOrigins = env.corsOrigin
   .filter(Boolean);
 const apiPrefixes = Array.from(new Set([env.apiPrefix, '/api/v1', '/api']));
 
+const corsOriginValidator = (origin, callback) => {
+  // Allow non-browser clients and same-origin requests.
+  if (!origin) {
+    callback(null, true);
+    return;
+  }
+
+  const isExplicitlyAllowed = allowedOrigins.includes(origin);
+  const isNetlifyApp = /^https:\/\/[a-z0-9-]+\.netlify\.app$/i.test(origin);
+
+  if (isExplicitlyAllowed || isNetlifyApp) {
+    callback(null, true);
+    return;
+  }
+
+  callback(new Error(`CORS blocked for origin: ${origin}`));
+};
+
 app.use(helmet());
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: corsOriginValidator,
     credentials: true
   })
 );

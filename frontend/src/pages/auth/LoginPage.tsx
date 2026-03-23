@@ -22,6 +22,28 @@ export const LoginPage = () => {
   const auth = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
+  const getServerError = (error: unknown) => {
+    const axiosLike = error as {
+      code?: string;
+      message?: string;
+      response?: { data?: { message?: string } };
+    };
+
+    if (axiosLike?.response?.data?.message) {
+      return axiosLike.response.data.message;
+    }
+
+    if (axiosLike?.code === 'ECONNABORTED') {
+      return 'Request timed out. Please try again.';
+    }
+
+    if (axiosLike?.message === 'Network Error') {
+      return 'Unable to reach server. Check backend URL, CORS, and internet connection.';
+    }
+
+    return 'Login failed. Please try again.';
+  };
+
   const form = useForm<FormData>({
     resolver: zodResolver(schema)
   });
@@ -36,10 +58,7 @@ export const LoginPage = () => {
     }
   });
 
-  const serverError = auth.error
-    ? ((auth.error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-       'Login failed. Please try again.')
-    : null;
+  const serverError = auth.error ? getServerError(auth.error) : null;
 
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
