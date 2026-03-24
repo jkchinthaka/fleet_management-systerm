@@ -1,4 +1,4 @@
-import { useMemo, useState, type ChangeEvent } from 'react';
+import { useEffect, useMemo, useState, type ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,6 +61,24 @@ export const RefuelPage = () => {
     }
   });
 
+  const watchFuelVolume = form.watch('fuel_volume');
+  const watchPricePerLitre = form.watch('price_per_litre');
+
+  const calculatedTotalCost = useMemo(() => {
+    const volume = Number(watchFuelVolume);
+    const pricePerLitre = Number(watchPricePerLitre);
+
+    if (!Number.isFinite(volume) || !Number.isFinite(pricePerLitre) || volume <= 0 || pricePerLitre < 0) {
+      return undefined;
+    }
+
+    return Number((volume * pricePerLitre).toFixed(2));
+  }, [watchFuelVolume, watchPricePerLitre]);
+
+  useEffect(() => {
+    form.setValue('total_cost', calculatedTotalCost, { shouldValidate: true });
+  }, [calculatedTotalCost, form]);
+
   const trendData = useMemo(() => {
     const map: Record<string, { date: string; totalCost: number; totalVolume: number }> = {};
     (list.data || []).forEach((r) => {
@@ -85,10 +103,6 @@ export const RefuelPage = () => {
 
   const onSubmit = form.handleSubmit(async (values) => {
     const payload = { ...values, ...(photo ? { photo } : {}) };
-
-    if (!payload.total_cost && payload.fuel_volume && payload.price_per_litre) {
-      payload.total_cost = Number((Number(payload.fuel_volume) * Number(payload.price_per_litre)).toFixed(2));
-    }
 
     await create.mutateAsync(payload);
     form.reset({ log_date: todayISO(), fuel_type: 'Diesel', full_tank: false });
@@ -245,7 +259,13 @@ export const RefuelPage = () => {
               <FieldError name="price_per_litre" />
             </div>
             <div>
-              <Input type="number" step="0.01" placeholder="Total cost (optional)" {...form.register('total_cost')} />
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="Total cost (auto)"
+                readOnly
+                {...form.register('total_cost')}
+              />
               <FieldError name="total_cost" />
             </div>
           </div>
