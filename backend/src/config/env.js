@@ -14,14 +14,14 @@ const mongoUriFromEnv =
 const mongoUriFallback = nodeEnv === 'development' ? 'mongodb://localhost:27017' : '';
 const mongoUri = mongoUriFromEnv || mongoUriFallback;
 
-if (!mongoUri) {
-  throw new Error(
-    'Missing Mongo URI. Set one of: MONGODB_URI, MONGO_URI, MONGODB_URL, MONGO_URL, or DATABASE_URL'
-  );
+if (!mongoUriFromEnv && nodeEnv === 'development') {
+  console.warn('[CONFIG] Mongo URI env var not found. Using local fallback mongodb://localhost:27017 for development.');
 }
 
-if (!mongoUriFromEnv) {
-  console.warn('[CONFIG] Mongo URI env var not found. Using local fallback mongodb://localhost:27017 for development.');
+if (!mongoUri && nodeEnv !== 'development') {
+  console.warn(
+    '[CONFIG] Mongo URI env var not found in non-development environment. Server will start in degraded mode until MONGODB_URI is configured.'
+  );
 }
 
 const hasWeakJwtSecret = jwtSecretRaw === 'unsafe_default_change_me' || jwtSecretRaw === 'replace_with_long_secret';
@@ -38,7 +38,7 @@ export const env = {
   port: Number(process.env.PORT || 4000),
   apiPrefix: process.env.API_PREFIX || '/api/v1',
   mongo: {
-    uri: mongoUri,
+    uri: mongoUri || null,
     dbName: process.env.MONGODB_DB_NAME || 'Fleet_New'
   },
   jwtSecret,

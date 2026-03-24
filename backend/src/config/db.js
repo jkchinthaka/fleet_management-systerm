@@ -45,6 +45,11 @@ const scheduleReconnect = () => {
 };
 
 export const connectDB = async () => {
+  if (!env.mongo.uri) {
+    logger.warn('MongoDB URI is not configured. Starting API without database connection. Set MONGODB_URI to enable persistence.');
+    return false;
+  }
+
   try {
     await mongoose.connect(env.mongo.uri, connectOptions);
     logger.info('MongoDB connection established');
