@@ -12,6 +12,7 @@ import notificationRoutes from './notificationRoutes.js';
 import mongoUserRoutes from './mongoUserRoutes.js';
 import rbacRoutes from './rbacRoutes.js';
 import reportsRoutes from './reportsRoutes.js';
+import refuelRoutes from './refuelRoutes.js';
 import costLogRoutes from './costLogRoutes.js';
 import reminderRoutes from './reminderRoutes.js';
 
@@ -30,6 +31,7 @@ export const buildRoutes = (apiPrefix) => {
   router.use(`${apiPrefix}/users`, mongoUserRoutes);
   router.use(`${apiPrefix}/rbac`, rbacRoutes);
   router.use(`${apiPrefix}/reports`, reportsRoutes);
+  router.use(`${apiPrefix}/refuel`, refuelRoutes);
   router.use(`${apiPrefix}/cost-logs`, costLogRoutes);
   router.use(`${apiPrefix}/reminders`, reminderRoutes);
   return router;

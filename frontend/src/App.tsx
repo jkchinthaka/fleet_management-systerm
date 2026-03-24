@@ -11,6 +11,7 @@ import {
   LoginPage,
   ServicePage,
   UsersPage,
+  RefuelPage,
   CostLogPage,
   RemindersPage,
   AnalyticsPage
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/service" element={<ServicePage />} />
           <Route path="/users" element={roleId === 1 ? <UsersPage /> : <Navigate to="/" replace />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/refuel" element={<RefuelPage />} />
           <Route path="/cost-logs" element={<CostLogPage />} />
           <Route path="/reminders" element={<RemindersPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
