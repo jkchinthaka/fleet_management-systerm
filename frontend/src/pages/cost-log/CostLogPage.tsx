@@ -10,6 +10,7 @@ import { DataTable } from '../../components/common/DataTable';
 import { useCostLog } from '../../hooks/useCostLog';
 import { useAppStore } from '../../store/appStore';
 import { readFileAsBase64 } from '../../utils/fileHelpers';
+import { formatLkr } from '../../utils/currency';
 import { CheckCircle, XCircle, Paperclip } from 'lucide-react';
 import {
   BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid
@@ -88,7 +89,7 @@ export const CostLogPage = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="type" tick={{ fontSize: 12 }} />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(value) => formatLkr(Number(value))} />
               <Bar dataKey="total" name="Total Cost" fill="#6366f1" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -102,7 +103,7 @@ export const CostLogPage = () => {
           { key: 'id', header: 'ID' },
           { key: 'vehicle', header: 'Vehicle' },
           { key: 'cost_type', header: 'Type' },
-          { key: 'amount', header: 'Amount' },
+          { key: 'amount', header: 'Amount (Rs.)' },
           { key: 'log_date', header: 'Date' },
           { key: 'status', header: 'Status' },
           ...(canApprove ? [{ key: 'actions' as const, header: 'Actions' }] : [])
@@ -111,7 +112,7 @@ export const CostLogPage = () => {
           id: row.id,
           vehicle: row.vehicle?.registration_number || row.vehicle_id,
           cost_type: row.cost_type,
-          amount: row.amount,
+          amount: formatLkr(row.amount),
           log_date: new Date(row.log_date).toLocaleDateString(),
           status: row.status,
           actions: canApprove ? (

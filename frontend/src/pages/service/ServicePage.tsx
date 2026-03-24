@@ -9,6 +9,7 @@ import { DataTable } from '../../components/common/DataTable';
 import { Card } from '../../components/ui/card';
 import { useService } from '../../hooks/useService';
 import type { ServiceRequest } from '../../types';
+import { formatLkr } from '../../utils/currency';
 
 const STATUS_COLORS: Record<ServiceRequest['status'], string> = {
   Pending: 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20',
@@ -79,7 +80,7 @@ export const ServicePage = () => {
           { key: 'title', header: 'Title' },
           { key: 'status_badge', header: 'Status' },
           { key: 'sla_deadline', header: 'SLA Deadline' },
-          { key: 'total_cost', header: 'Cost (₹)' },
+          { key: 'total_cost', header: 'Cost (Rs.)' },
           { key: '_actions', header: 'Actions' }
         ]}
         data={(list.data || []).map((r) => ({
@@ -91,7 +92,7 @@ export const ServicePage = () => {
             </span>
           ),
           sla_deadline: r.sla_deadline ? new Date(r.sla_deadline).toLocaleDateString() : '-',
-          total_cost: r.total_cost != null ? `₹${Number(r.total_cost).toLocaleString()}` : '-',
+          total_cost: r.total_cost != null ? formatLkr(r.total_cost) : '-',
           _actions: (
             <div className="flex gap-2">
               {r.status === 'Pending' && (

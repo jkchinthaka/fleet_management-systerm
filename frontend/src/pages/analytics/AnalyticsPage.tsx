@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { useCostLog } from '../../hooks/useCostLog';
+import { formatLkr } from '../../utils/currency';
 import {
   BarChart, Bar, PieChart, Pie, Cell,
   ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, Legend
@@ -65,11 +66,11 @@ export const AnalyticsPage = () => {
             </div>
             <div className="rounded-lg bg-amber-50 p-3 text-center dark:bg-amber-900/30">
               <p className="text-sm text-slate-500">Cost per km</p>
-              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{calcResult.costPerKm}</p>
+              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{formatLkr(calcResult.costPerKm)}</p>
             </div>
             <div className="rounded-lg bg-green-50 p-3 text-center dark:bg-green-900/30">
               <p className="text-sm text-slate-500">Total Cost</p>
-              <p className="text-xl font-bold text-green-600 dark:text-green-400">{calcResult.totalCost}</p>
+              <p className="text-xl font-bold text-green-600 dark:text-green-400">{formatLkr(calcResult.totalCost)}</p>
             </div>
           </div>
         )}
@@ -87,7 +88,7 @@ export const AnalyticsPage = () => {
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip formatter={(value) => formatLkr(Number(value))} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -103,7 +104,7 @@ export const AnalyticsPage = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="vehicle" tick={{ fontSize: 11 }} />
                 <YAxis />
-                <Tooltip />
+                <Tooltip formatter={(value) => formatLkr(Number(value))} />
                 <Bar dataKey="total" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

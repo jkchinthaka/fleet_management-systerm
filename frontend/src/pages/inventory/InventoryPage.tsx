@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/input';
 import { Modal } from '../../components/ui/modal';
 import { DataTable } from '../../components/common/DataTable';
 import { useInventory } from '../../hooks/useInventory';
+import { formatLkr } from '../../utils/currency';
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
@@ -152,7 +153,7 @@ export const InventoryPage = () => {
             { key: 'supplier', header: 'Supplier' },
             { key: 'order_date', header: 'Order Date' },
             { key: 'status', header: 'Status' },
-            { key: 'total_amount', header: 'Amount' }
+            { key: 'total_amount', header: 'Amount (Rs.)' }
           ]}
           isLoading={purchaseOrders.isLoading}
           isError={purchaseOrders.isError}
@@ -161,7 +162,7 @@ export const InventoryPage = () => {
             supplier: po.supplier?.supplier_name || po.supplier_id,
             order_date: po.order_date,
             status: po.status,
-            total_amount: po.total_amount
+            total_amount: formatLkr(po.total_amount)
           }))}
         />
       </Card>

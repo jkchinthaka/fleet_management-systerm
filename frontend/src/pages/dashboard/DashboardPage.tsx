@@ -4,6 +4,7 @@ import { StatCard } from '../../components/common/StatCard';
 import { useDashboard } from '../../hooks/useDashboard';
 import { useAppStore } from '../../store/appStore';
 import { ROLE_TASKS_BY_ID } from '../../config/roleTasks';
+import { formatLkr } from '../../utils/currency';
 import {
   XAxis,
   YAxis,
@@ -28,7 +29,7 @@ export const DashboardPage = () => {
     <div className="space-y-6">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard title="Total Vehicles" value={String(overview?.totalVehicles ?? 0)} icon={Car} />
-        <StatCard title="Monthly Expenses" value={`INR ${overview?.monthlyExpenses ?? 0}`} icon={ReceiptIndianRupee} />
+        <StatCard title="Monthly Expenses" value={formatLkr(overview?.monthlyExpenses ?? 0)} icon={ReceiptIndianRupee} />
         <StatCard title="Active Service Requests" value={String(overview?.activeServiceRequests ?? 0)} icon={Wrench} />
       </section>
 

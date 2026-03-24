@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/input';
 import { Modal } from '../../components/ui/modal';
 import { DataTable } from '../../components/common/DataTable';
 import { useMachineAsset } from '../../hooks/useMachineAsset';
+import { formatLkr } from '../../utils/currency';
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
@@ -139,12 +140,17 @@ export const MachineAssetPage = () => {
             { key: 'machine_id', header: 'Machine ID' },
             { key: 'service_date', header: 'Service Date' },
             { key: 'description', header: 'Description' },
-            { key: 'service_cost', header: 'Cost' },
+            { key: 'service_cost', header: 'Cost (Rs.)' },
             { key: 'technician', header: 'Technician' }
           ]}
           isLoading={serviceHistory.isLoading}
           isError={serviceHistory.isError}
-          data={(serviceHistory.data || []).map((h) => ({ ...h, description: h.description || '-', technician: h.technician || '-' }))}
+          data={(serviceHistory.data || []).map((h) => ({
+            ...h,
+            description: h.description || '-',
+            technician: h.technician || '-',
+            service_cost: formatLkr(h.service_cost)
+          }))}
         />
       </Card>
 

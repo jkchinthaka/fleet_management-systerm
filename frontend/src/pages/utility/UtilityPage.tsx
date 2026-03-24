@@ -10,6 +10,7 @@ import { Input } from '../../components/ui/input';
 import { Modal } from '../../components/ui/modal';
 import { DataTable } from '../../components/common/DataTable';
 import { useUtility } from '../../hooks/useUtility';
+import { formatLkr } from '../../utils/currency';
 
 const schema = z.object({
   reading_date: z.string().min(1, 'Date is required'),
@@ -131,7 +132,12 @@ export const UtilityPage = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(value, name) => {
+                if (String(name).toLowerCase().includes('cost')) {
+                  return formatLkr(Number(value));
+                }
+                return value;
+              }} />
               <Legend />
               <Line dataKey="waterUnits" stroke="#00a3a3" strokeWidth={2} />
               <Line dataKey="electricityUnits" stroke="#365ff8" strokeWidth={2} />
@@ -150,7 +156,7 @@ export const UtilityPage = () => {
               { key: 'reading_date', header: 'Date', render: (v) => String(v ?? '').split('T')[0] },
               { key: 'meter_location', header: 'Location' },
               { key: 'units_consumed', header: 'Units' },
-              { key: 'cost', header: 'Cost' }
+              { key: 'cost', header: 'Cost (Rs.)', render: (v) => formatLkr(Number(v)) }
             ]}
             isLoading={water.isLoading}
             isError={water.isError}
@@ -173,7 +179,7 @@ export const UtilityPage = () => {
               { key: 'reading_date', header: 'Date', render: (v) => String(v ?? '').split('T')[0] },
               { key: 'meter_location', header: 'Location' },
               { key: 'units_consumed', header: 'Units' },
-              { key: 'cost', header: 'Cost' }
+              { key: 'cost', header: 'Cost (Rs.)', render: (v) => formatLkr(Number(v)) }
             ]}
             isLoading={electricity.isLoading}
             isError={electricity.isError}

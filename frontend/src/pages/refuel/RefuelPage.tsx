@@ -12,6 +12,7 @@ import { useRefuel } from '../../hooks/useRefuel';
 import { useVehicles } from '../../hooks/useVehicles';
 import { useAppStore } from '../../store/appStore';
 import { readFileAsBase64 } from '../../utils/fileHelpers';
+import { formatLkr } from '../../utils/currency';
 import {
   AreaChart,
   Area,
@@ -127,7 +128,7 @@ export const RefuelPage = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tick={{ fontSize: 11 }} />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(value) => formatLkr(Number(value))} />
               <Area type="monotone" dataKey="totalCost" name="Total Cost" stroke="#365ff8" fill="#365ff833" />
             </AreaChart>
           </ResponsiveContainer>
@@ -142,8 +143,8 @@ export const RefuelPage = () => {
           { key: 'vehicle', header: 'Vehicle' },
           { key: 'log_date', header: 'Date' },
           { key: 'fuel_volume', header: 'Volume (L)' },
-          { key: 'price_per_litre', header: 'Price/L' },
-          { key: 'total_cost', header: 'Total Cost' },
+          { key: 'price_per_litre', header: 'Price/L (Rs.)' },
+          { key: 'total_cost', header: 'Total Cost (Rs.)' },
           { key: 'attachment', header: 'Attachment' },
           { key: 'status', header: 'Status' },
           ...(canApprove ? [{ key: 'actions' as const, header: 'Actions' }] : []),
@@ -154,8 +155,8 @@ export const RefuelPage = () => {
           vehicle: row.vehicle?.registration_number || row.vehicle_id,
           log_date: new Date(row.log_date).toLocaleDateString(),
           fuel_volume: row.fuel_volume,
-          price_per_litre: row.price_per_litre ?? '-',
-          total_cost: row.total_cost,
+          price_per_litre: row.price_per_litre != null ? formatLkr(row.price_per_litre) : '-',
+          total_cost: formatLkr(row.total_cost),
           attachment: row.photo_url ? (
             <a className="text-xs text-brand-600 hover:underline" href={row.photo_url} target="_blank" rel="noreferrer">
               View
