@@ -14,6 +14,7 @@
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "build": "npm --prefix frontend run build",
     "start": "npm --prefix backend start",
-    "start:full": "npm run build && npm run start"
+    "start:full": "npm run build && npm run start",
+    "deploy:render": "node scripts/trigger-render-deploy.mjs"
   }
 }
