@@ -52,6 +52,20 @@ app.use(express.json({ limit: '10mb' }));
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(apiRateLimiter);
 
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    name: 'Fleet Management API',
+    status: 'running',
+    apiBase: env.apiPrefix,
+    health: '/health'
+  });
+});
+
+app.head('/', (_req, res) => {
+  res.sendStatus(200);
+});
+
 app.get(`${env.apiPrefix}/meta`, (_req, res) => {
   res.status(200).json({
     success: true,

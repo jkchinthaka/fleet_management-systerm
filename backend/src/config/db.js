@@ -14,9 +14,15 @@ const connectOptions = {
   retryReads: true
 };
 
+export const isDbConfigured = () => Boolean(env.mongo.uri);
+
 export const isDbConnected = () => mongoose.connection.readyState === 1;
 
 export const waitForDbConnection = async (timeoutMs = 8000, pollMs = 250) => {
+  if (!isDbConfigured()) {
+    return false;
+  }
+
   if (isDbConnected()) {
     return true;
   }
@@ -45,7 +51,7 @@ const scheduleReconnect = () => {
 };
 
 export const connectDB = async () => {
-  if (!env.mongo.uri) {
+  if (!isDbConfigured()) {
     logger.warn('MongoDB URI is not configured. Starting API without database connection. Set MONGODB_URI to enable persistence.');
     return false;
   }

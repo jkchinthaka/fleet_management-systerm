@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
-import { waitForDbConnection } from '../config/db.js';
+import { isDbConfigured, waitForDbConnection } from '../config/db.js';
 import { MongoUser } from '../models/mongoUserModel.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getNextSequence } from '../utils/autoIncrement.js';
@@ -22,11 +22,18 @@ const normalizeEmail = (email) => email.trim().toLowerCase();
 
 export const mongoAuthService = {
   async register(payload) {
+    if (!isDbConfigured()) {
+      throw new ApiError(
+        503,
+        'Authentication service is unavailable: database is not configured. Set MONGODB_URI in the deployment environment variables.'
+      );
+    }
+
     const connected = await waitForDbConnection(8000);
     if (!connected) {
       throw new ApiError(
         503,
-        'Authentication service is temporarily unavailable. Database connection is not ready; check Atlas network access and try again.'
+        'Authentication service is temporarily unavailable. Database connection is not ready; check Atlas network access allowlist and try again.'
       );
     }
 
@@ -54,11 +61,18 @@ export const mongoAuthService = {
   },
 
   async login(payload) {
+    if (!isDbConfigured()) {
+      throw new ApiError(
+        503,
+        'Authentication service is unavailable: database is not configured. Set MONGODB_URI in the deployment environment variables.'
+      );
+    }
+
     const connected = await waitForDbConnection(8000);
     if (!connected) {
       throw new ApiError(
         503,
-        'Authentication service is temporarily unavailable. Database connection is not ready; check Atlas network access and try again.'
+        'Authentication service is temporarily unavailable. Database connection is not ready; check Atlas network access allowlist and try again.'
       );
     }
     const email = normalizeEmail(payload.email);
