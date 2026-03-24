@@ -1,15 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CheckCircle, XCircle, Fuel } from 'lucide-react';
+import { CheckCircle, XCircle, Fuel, Paperclip } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Modal } from '../../components/ui/modal';
 import { Card } from '../../components/ui/card';
 import { DataTable } from '../../components/common/DataTable';
 import { useRefuel } from '../../hooks/useRefuel';
+import { useVehicles } from '../../hooks/useVehicles';
 import { useAppStore } from '../../store/appStore';
+import { readFileAsBase64 } from '../../utils/fileHelpers';
 import {
   AreaChart,
   Area,
@@ -40,9 +42,13 @@ type FormData = z.infer<typeof schema>;
 
 export const RefuelPage = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [photo, setPhoto] = useState<string | null>(null);
   const roleId = useAppStore((s) => s.roleId);
   const canApprove = roleId === 1 || roleId === 7;
   const { list, create, approve, remove } = useRefuel();
+  const { list: vehicles } = useVehicles();
+  const vehicleOptions = vehicles.data || [];
+  const hasVehicles = vehicleOptions.length > 0;
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -65,16 +71,28 @@ export const RefuelPage = () => {
   }, [list.data]);
 
   const onSubmit = form.handleSubmit(async (values) => {
-    const payload = { ...values };
+    const payload = { ...values, ...(photo ? { photo } : {}) };
 
     if (!payload.total_cost && payload.fuel_volume && payload.price_per_litre) {
-      payload.total_cost = Number((payload.fuel_volume * payload.price_per_litre).toFixed(2));
+      payload.total_cost = Number((Number(payload.fuel_volume) * Number(payload.price_per_litre)).toFixed(2));
     }
 
     await create.mutateAsync(payload);
     form.reset({ log_date: todayISO(), fuel_type: 'Diesel', full_tank: false });
+    setPhoto(null);
     setIsOpen(false);
   });
+
+  const openCreateModal = async () => {
+    await vehicles.refetch();
+    setIsOpen(true);
+  };
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhoto(await readFileAsBase64(file));
+  };
 
   const FieldError = ({ name }: { name: keyof FormData }) => {
     const err = form.formState.errors[name];
@@ -88,8 +106,18 @@ export const RefuelPage = () => {
           <Fuel size={22} />
           <h1 className="text-2xl font-bold">Refuel Management</h1>
         </div>
-        <Button onClick={() => setIsOpen(true)}>Add Refuel Log</Button>
+        <Button onClick={openCreateModal} disabled={!hasVehicles} title={!hasVehicles ? 'Add a vehicle first' : undefined}>
+          Add Refuel Log
+        </Button>
       </div>
+
+      {!hasVehicles && !vehicles.isLoading && (
+        <Card>
+          <p className="text-sm text-[var(--muted)]">
+            No vehicles found. Add at least one vehicle in Vehicle Management before adding refuel logs.
+          </p>
+        </Card>
+      )}
 
       <Card>
         <h2 className="mb-3 text-lg font-semibold">Refuel Cost Trend</h2>
@@ -116,6 +144,7 @@ export const RefuelPage = () => {
           { key: 'fuel_volume', header: 'Volume (L)' },
           { key: 'price_per_litre', header: 'Price/L' },
           { key: 'total_cost', header: 'Total Cost' },
+          { key: 'attachment', header: 'Attachment' },
           { key: 'status', header: 'Status' },
           ...(canApprove ? [{ key: 'actions' as const, header: 'Actions' }] : []),
           { key: 'deleteAction' as const, header: '' }
@@ -127,6 +156,11 @@ export const RefuelPage = () => {
           fuel_volume: row.fuel_volume,
           price_per_litre: row.price_per_litre ?? '-',
           total_cost: row.total_cost,
+          attachment: row.photo_url ? (
+            <a className="text-xs text-brand-600 hover:underline" href={row.photo_url} target="_blank" rel="noreferrer">
+              View
+            </a>
+          ) : '-',
           status: row.status,
           actions: canApprove ? (
             <div className="flex gap-1">
@@ -148,7 +182,17 @@ export const RefuelPage = () => {
         <form className="space-y-3" onSubmit={onSubmit}>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Input type="number" placeholder="Vehicle ID *" {...form.register('vehicle_id')} />
+              <select
+                className="w-full rounded-xl border border-slate-200 bg-transparent px-4 py-2 text-sm dark:border-slate-700"
+                {...form.register('vehicle_id', { valueAsNumber: true })}
+              >
+                <option value="">Select vehicle *</option>
+                {vehicleOptions.map((vehicle) => (
+                  <option key={vehicle.id} value={vehicle.id}>
+                    {vehicle.registration_number} (ID: {vehicle.id})
+                  </option>
+                ))}
+              </select>
               <FieldError name="vehicle_id" />
             </div>
             <div>
@@ -195,6 +239,15 @@ export const RefuelPage = () => {
               rows={2}
               {...form.register('notes')}
             />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-[var(--muted)]">Attachment for selected vehicle</label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-3 text-sm hover:border-brand-500 dark:border-slate-600">
+              <Paperclip size={18} className="text-slate-400" />
+              <span>{photo ? 'File attached' : 'Upload receipt or proof file'}</span>
+              <input type="file" accept="image/*,.pdf" className="hidden" onChange={handleFileChange} />
+            </label>
           </div>
 
           <label className="flex items-center gap-2 text-sm text-[var(--muted)]">

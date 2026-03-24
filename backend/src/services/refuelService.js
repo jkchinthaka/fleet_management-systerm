@@ -1,4 +1,5 @@
 import { refuelRepository } from '../repositories/refuelRepository.js';
+import { Vehicle } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 
 export const refuelService = {
@@ -6,7 +7,12 @@ export const refuelService = {
     return refuelRepository.findAll(filters);
   },
 
-  create(payload, userId) {
+  async create(payload, userId) {
+    const vehicle = await Vehicle.findOne({ id: Number(payload.vehicle_id) }).lean();
+    if (!vehicle) {
+      throw new ApiError(400, 'Vehicle not found. Add the vehicle first before creating a refuel log.');
+    }
+
     // Auto-calculate total_cost if price_per_litre and fuel_volume are given but total_cost is not
     if (!payload.total_cost && payload.price_per_litre && payload.fuel_volume) {
       payload.total_cost = Number((payload.fuel_volume * payload.price_per_litre).toFixed(2));
@@ -24,6 +30,13 @@ export const refuelService = {
   async update(id, payload, userId) {
     const existing = await refuelRepository.findById(id);
     if (!existing) throw new ApiError(404, 'Refuel log not found');
+
+    if (payload.vehicle_id != null) {
+      const vehicle = await Vehicle.findOne({ id: Number(payload.vehicle_id) }).lean();
+      if (!vehicle) {
+        throw new ApiError(400, 'Vehicle not found. Add the vehicle first before assigning a refuel log.');
+      }
+    }
 
     // Recalculate total_cost when volume or price changes
     const vol = payload.fuel_volume ?? existing.fuel_volume;
