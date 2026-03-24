@@ -3,6 +3,7 @@ import { env } from './env.js';
 import { logger } from './logger.js';
 
 let reconnectTimer = null;
+let lastDbConnectionError = null;
 
 const connectOptions = {
   dbName: env.mongo.dbName,
@@ -17,6 +18,12 @@ const connectOptions = {
 export const isDbConfigured = () => Boolean(env.mongo.uri);
 
 export const isDbConnected = () => mongoose.connection.readyState === 1;
+
+export const getDbConnectionDiagnostics = () => ({
+  configured: isDbConfigured(),
+  connected: isDbConnected(),
+  lastError: lastDbConnectionError
+});
 
 export const waitForDbConnection = async (timeoutMs = 8000, pollMs = 250) => {
   if (!isDbConfigured()) {
@@ -52,12 +59,14 @@ const scheduleReconnect = () => {
 
 export const connectDB = async () => {
   if (!isDbConfigured()) {
+    lastDbConnectionError = 'MongoDB URI is not configured.';
     logger.warn('MongoDB URI is not configured. Starting API without database connection. Set MONGODB_URI to enable persistence.');
     return false;
   }
 
   try {
     await mongoose.connect(env.mongo.uri, connectOptions);
+    lastDbConnectionError = null;
     logger.info('MongoDB connection established');
 
     if (!mongoose.connection.listeners('disconnected').length) {
@@ -75,6 +84,7 @@ export const connectDB = async () => {
 
     return true;
   } catch (err) {
+    lastDbConnectionError = err?.message || 'Unknown MongoDB connection error';
     logger.error(`MongoDB connection failed: ${err.message}`);
     scheduleReconnect();
     return false;
