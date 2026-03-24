@@ -40,7 +40,7 @@ app.use(
     credentials: true
   })
 );
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(apiRateLimiter);
 

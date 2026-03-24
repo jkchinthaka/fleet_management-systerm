@@ -239,3 +239,80 @@ export type AlertThreshold = {
   comparison_operator: string;
   is_active: boolean;
 };
+
+// ─── Phase 1: Refueling + Cost Logging ──────────────────────────────
+
+export type RefuelLog = {
+  id: number;
+  vehicle_id: number;
+  log_date: string;
+  odometer: number;
+  fuel_volume: number;
+  price_per_litre?: number;
+  total_cost: number;
+  full_tank?: boolean;
+  fuel_type?: string;
+  notes?: string;
+  photo_url?: string;
+  photo_public_id?: string;
+  status: 'Active' | 'PendingCorrection' | 'Approved' | 'Rejected';
+  created_by?: string;
+  updated_by?: string;
+  approved_by?: string;
+  approved_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  vehicle?: Vehicle;
+};
+
+export type CostLogEntry = {
+  id: number;
+  vehicle_id: number;
+  cost_type: string;
+  amount: number;
+  log_date: string;
+  notes?: string;
+  attachment_url?: string;
+  attachment_public_id?: string;
+  status: 'Active' | 'PendingCorrection' | 'Approved' | 'Rejected';
+  created_by?: string;
+  updated_by?: string;
+  approved_by?: string;
+  approved_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  vehicle?: Vehicle;
+};
+
+// ─── Phase 2: Reminders + Recurrence ────────────────────────────────
+
+export type ReminderEntry = {
+  id: number;
+  vehicle_id: number;
+  reminder_type: string;
+  title: string;
+  description?: string;
+  due_date: string;
+  recurrence: string;
+  recurrence_end?: string;
+  is_completed: boolean;
+  completed_at?: string;
+  notify_before_days?: number;
+  assigned_to?: string;
+  created_by?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  vehicle?: Vehicle;
+};
+
+// ─── Phase 3: Fuel Stations ─────────────────────────────────────────
+
+export type FuelStationEntry = {
+  id: number;
+  name: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  is_favorite?: boolean;
+  created_by?: string;
+};

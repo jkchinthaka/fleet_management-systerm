@@ -15,3 +15,27 @@ export const enforceDriverFuelScope = (req, _res, next) => {
   }
   next();
 };
+
+// Drivers can only see/create their own refuel logs
+export const enforceDriverRefuelScope = (req, _res, next) => {
+  if (req.user?.roleId === ROLE_IDS.DRIVER_EMPLOYEE) {
+    req.query.createdBy = String(req.user.sub);
+  }
+  next();
+};
+
+// Drivers can only see/create their own cost logs
+export const enforceDriverCostScope = (req, _res, next) => {
+  if (req.user?.roleId === ROLE_IDS.DRIVER_EMPLOYEE) {
+    req.query.createdBy = String(req.user.sub);
+  }
+  next();
+};
+
+// Drivers see only reminders assigned to them
+export const enforceDriverReminderScope = (req, _res, next) => {
+  if (req.user?.roleId === ROLE_IDS.DRIVER_EMPLOYEE) {
+    req.query.assignedTo = String(req.user.sub);
+  }
+  next();
+};

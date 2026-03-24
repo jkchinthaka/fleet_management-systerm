@@ -22,3 +22,7 @@ export { AlertThreshold } from './alertThresholdModel.js';
 export { VehicleDocument } from './vehicleDocumentModel.js';
 export { Notification } from './notificationModel.js';
 export { SavedReportFilter } from './savedReportFilterModel.js';
+export { RefuelLog } from './refuelLogModel.js';
+export { CostLog } from './costLogModel.js';
+export { Reminder } from './reminderModel.js';
+export { FuelStation } from './fuelStationModel.js';

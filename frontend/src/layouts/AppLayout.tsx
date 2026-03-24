@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Bell, Fuel, LayoutDashboard, LogOut, Moon, Sun, Truck, Droplets, Boxes, Cpu, CalendarDays, Wrench, Users } from 'lucide-react';
+import { Bell, Fuel, LayoutDashboard, LogOut, Moon, Sun, Truck, Droplets, Boxes, Cpu, CalendarDays, Wrench, Users, Receipt, Clock, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../store/appStore';
 import { cn } from '../utils/cn';
@@ -14,6 +14,10 @@ const navItems = [
   { to: '/machine-asset', label: 'Machine & Asset', icon: Cpu },
   { to: '/attendance', label: 'Attendance', icon: CalendarDays },
   { to: '/service', label: 'Service', icon: Wrench },
+  { to: '/refuel', label: 'Refuel Logs', icon: Fuel },
+  { to: '/cost-logs', label: 'Cost Logs', icon: Receipt },
+  { to: '/reminders', label: 'Reminders', icon: Clock },
+  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/users', label: 'Users', icon: Users },
   { to: '/notifications', label: 'Notifications', icon: Bell }
 ];

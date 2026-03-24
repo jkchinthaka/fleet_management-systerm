@@ -196,3 +196,52 @@ export const reportFilterSchema = z.object({
   module: z.string().min(2),
   filters: z.record(z.any())
 });
+
+// ─── Phase 1: Refueling + Cost Logging ───────────────────────────────
+export const refuelLogSchema = z.object({
+  vehicle_id:      z.number().int().positive(),
+  log_date:        z.string().min(1, 'Date is required'),
+  odometer:        z.number().nonnegative('Odometer must be >= 0'),
+  fuel_volume:     z.number().positive('Fuel volume must be > 0'),
+  price_per_litre: z.number().nonnegative().optional(),
+  total_cost:      z.number().nonnegative().optional(),
+  full_tank:       z.boolean().optional(),
+  fuel_type:       z.enum(['Petrol', 'Diesel', 'Electric', 'Hybrid', 'CNG', 'Other']).optional(),
+  notes:           z.string().max(500).optional(),
+  photo:           z.string().optional()   // base64 data URI
+});
+
+export const costLogSchema = z.object({
+  vehicle_id: z.number().int().positive(),
+  cost_type:  z.enum(['Service', 'Repair', 'Insurance', 'Registration', 'Toll', 'Parking', 'Tyre', 'Other']),
+  amount:     z.number().positive('Amount must be > 0'),
+  log_date:   z.string().min(1, 'Date is required'),
+  notes:      z.string().max(500).optional(),
+  attachment: z.string().optional()
+});
+
+export const approvalSchema = z.object({
+  approved: z.boolean()
+});
+
+// ─── Phase 2: Reminders + Recurrence ─────────────────────────────────
+export const reminderSchema = z.object({
+  vehicle_id:        z.number().int().positive(),
+  reminder_type:     z.enum(['Insurance', 'Maintenance', 'Registration', 'Inspection', 'TyreChange', 'OilChange', 'Custom']),
+  title:             z.string().min(2).max(200),
+  description:       z.string().max(500).optional(),
+  due_date:          z.string().min(1, 'Due date is required'),
+  recurrence:        z.enum(['None', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']).optional(),
+  recurrence_end:    z.string().optional(),
+  notify_before_days:z.number().int().nonnegative().optional(),
+  assigned_to:       z.string().optional()
+});
+
+// ─── Phase 3: Fuel Stations ──────────────────────────────────────────
+export const fuelStationSchema = z.object({
+  name:        z.string().min(2).max(200),
+  address:     z.string().max(400).optional(),
+  latitude:    z.number().min(-90).max(90).optional(),
+  longitude:   z.number().min(-180).max(180).optional(),
+  is_favorite: z.boolean().optional()
+});
