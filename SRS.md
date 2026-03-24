@@ -42,11 +42,20 @@ The system is a web-based enterprise application with a decoupled frontend and b
 ### 3.2 User Classes and Characteristics
 - Admin: full access, user and role management
 - Fleet Manager: fleet operations and monitoring
-- Maintenance Technician: service and machine tasks
-- Inventory Officer: stock and purchasing
-- Finance Accountant: utility/fuel cost visibility
-- Driver Employee: attendance and operational data submission
-- Supervisor Manager: oversight and approvals
+- Technician: service and machine tasks
+- Inventory Manager: stock and purchasing
+- Finance Officer: utility/fuel cost visibility
+- Driver: attendance and operational data submission
+- Supervisor: oversight and approvals
+
+### 3.2.1 Role-Based Tasks and Responsibilities
+- Admin: manage users, assign roles, maintain access policies, and oversee all modules.
+- Fleet Manager: manage vehicles and fleet operations, monitor dashboard KPIs, and coordinate fleet performance.
+- Technician: create and update service requests, maintenance tasks, and machine service history.
+- Inventory Manager: manage products, suppliers, purchase orders, GRNs, and stock movements.
+- Finance Officer: review utility and fuel cost records, analyze spend trends, and support financial reporting.
+- Driver: submit attendance and operational entries required for daily fleet activities.
+- Supervisor: review operational data, monitor team execution, and approve supervised workflows.
 
 ### 3.3 Operating Environment
 - Client: modern browsers (Chrome, Edge, Firefox)
@@ -70,6 +79,7 @@ The system is a web-based enterprise application with a decoupled frontend and b
 - FR-002: The system shall issue JWT tokens on successful authentication.
 - FR-003: The system shall enforce RBAC on protected endpoints.
 - FR-004: The system shall provide current user profile endpoint.
+- FR-005: The system shall assign each user role-specific tasks and responsibilities according to the defined role model (Admin, Fleet Manager, Technician, Inventory Manager, Finance Officer, Driver, Supervisor).
 
 ### 4.2 User Management
 - FR-010: Admin shall create users with name, email, password, and role.

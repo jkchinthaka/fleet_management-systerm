@@ -2,6 +2,8 @@ import { Activity, Car, ReceiptIndianRupee, Wrench } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { StatCard } from '../../components/common/StatCard';
 import { useDashboard } from '../../hooks/useDashboard';
+import { useAppStore } from '../../store/appStore';
+import { ROLE_TASKS_BY_ID } from '../../config/roleTasks';
 import {
   LineChart,
   Line,
@@ -17,10 +19,12 @@ import {
 
 export const DashboardPage = () => {
   const { data, isLoading } = useDashboard();
+  const roleId = useAppStore((s) => s.roleId);
 
   if (isLoading) return <p>Loading dashboard...</p>;
 
   const overview = data?.overview;
+  const currentRoleTasks = roleId != null ? ROLE_TASKS_BY_ID[roleId] : undefined;
 
   return (
     <div className="space-y-6">
@@ -64,6 +68,22 @@ export const DashboardPage = () => {
           </div>
         </Card>
       </section>
+
+      <Card>
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <h3 className="text-lg font-semibold">Role-Based Tasks</h3>
+          <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+            {currentRoleTasks?.roleName ?? 'Unknown Role'}
+          </span>
+        </div>
+        <ul className="space-y-2 text-sm text-[var(--muted)]">
+          {(currentRoleTasks?.responsibilities ?? ['No role tasks configured for this user.']).map((task) => (
+            <li key={task} className="rounded-lg border border-slate-200 px-3 py-2 dark:border-slate-700">
+              {task}
+            </li>
+          ))}
+        </ul>
+      </Card>
 
       <Card>
         <h3 className="mb-4 text-lg font-semibold">Recent Activities</h3>

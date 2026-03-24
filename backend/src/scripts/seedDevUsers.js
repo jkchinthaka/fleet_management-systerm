@@ -8,11 +8,11 @@ const DEV_PASSWORD = 'Admin@12345';
 const DEV_USERS = [
   { full_name: 'System Admin', email: 'admin@fleetmatrix.local', role_id: 1 },
   { full_name: 'Fleet Manager', email: 'fleet.manager@fleetmatrix.local', role_id: 2 },
-  { full_name: 'Maintenance Technician', email: 'technician@fleetmatrix.local', role_id: 3 },
-  { full_name: 'Inventory Officer', email: 'inventory@fleetmatrix.local', role_id: 4 },
-  { full_name: 'Finance Accountant', email: 'finance@fleetmatrix.local', role_id: 5 },
-  { full_name: 'Driver Employee', email: 'driver@fleetmatrix.local', role_id: 6 },
-  { full_name: 'Supervisor Manager', email: 'supervisor@fleetmatrix.local', role_id: 7 }
+  { full_name: 'Technician', email: 'technician@fleetmatrix.local', role_id: 3 },
+  { full_name: 'Inventory Manager', email: 'inventory@fleetmatrix.local', role_id: 4 },
+  { full_name: 'Finance Officer', email: 'finance@fleetmatrix.local', role_id: 5 },
+  { full_name: 'Driver', email: 'driver@fleetmatrix.local', role_id: 6 },
+  { full_name: 'Supervisor', email: 'supervisor@fleetmatrix.local', role_id: 7 }
 ];
 
 const seedDevUsers = async () => {

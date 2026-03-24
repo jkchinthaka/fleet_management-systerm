@@ -1,6 +1,37 @@
 import axios from 'axios';
 import { useAppStore } from '../../store/appStore';
 
+const AUTH_REQUEST_TIMEOUT_MS = 30000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 15000;
+const MAX_RETRY_ATTEMPTS = 1;
+
+type RetryableRequestConfig = {
+  _retryCount?: number;
+  url?: string;
+  method?: string;
+  timeout?: number;
+};
+
+const isAuthRoute = (url = '') => /\/auth(-mongo)?\/login$/i.test(url);
+
+const shouldRetryRequest = (error: any) => {
+  const config = (error?.config ?? {}) as RetryableRequestConfig;
+  const retryCount = config._retryCount ?? 0;
+  const status = error?.response?.status;
+  const isTimeout = error?.code === 'ECONNABORTED';
+  const isNetworkError = error?.message === 'Network Error';
+
+  if (retryCount >= MAX_RETRY_ATTEMPTS) {
+    return false;
+  }
+
+  if (status) {
+    return false;
+  }
+
+  return isTimeout || isNetworkError;
+};
+
 const isLocalhostApi = (url: string) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(url);
 
 const resolveBaseUrl = () => {
@@ -24,7 +55,7 @@ const baseURL = resolveBaseUrl();
 
 export const apiClient = axios.create({
   baseURL,
-  timeout: 15000
+  timeout: DEFAULT_REQUEST_TIMEOUT_MS
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -32,12 +63,26 @@ apiClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  if (isAuthRoute(config.url) && !config.timeout) {
+    config.timeout = AUTH_REQUEST_TIMEOUT_MS;
+  }
+
   return config;
 });
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    if (shouldRetryRequest(error)) {
+      const config = error.config as RetryableRequestConfig;
+      config._retryCount = (config._retryCount ?? 0) + 1;
+
+      // Brief delay helps with transient cold starts and connection hiccups.
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      return apiClient.request(config as any);
+    }
+
     if (error.response?.status === 401) {
       useAppStore.getState().setToken(null);
       window.location.href = '/login';

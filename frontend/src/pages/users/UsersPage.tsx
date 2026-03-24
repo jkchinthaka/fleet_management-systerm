@@ -12,11 +12,11 @@ import { useUsers } from '../../hooks/useUsers';
 const ROLE_OPTIONS = [
   { id: 1, name: 'Admin' },
   { id: 2, name: 'Fleet Manager' },
-  { id: 3, name: 'Maintenance Technician' },
-  { id: 4, name: 'Inventory Purchasing Officer' },
-  { id: 5, name: 'Finance Accountant' },
-  { id: 6, name: 'Driver Employee' },
-  { id: 7, name: 'Supervisor Manager' }
+  { id: 3, name: 'Technician' },
+  { id: 4, name: 'Inventory Manager' },
+  { id: 5, name: 'Finance Officer' },
+  { id: 6, name: 'Driver' },
+  { id: 7, name: 'Supervisor' }
 ] as const;
 
 const schema = z.object({

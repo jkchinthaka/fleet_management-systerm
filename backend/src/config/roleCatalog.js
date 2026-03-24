@@ -1,11 +1,11 @@
 export const ROLE_CATALOG = {
   1: 'Admin',
   2: 'Fleet Manager',
-  3: 'Maintenance Technician',
-  4: 'Inventory Purchasing Officer',
-  5: 'Finance Accountant',
-  6: 'Driver Employee',
-  7: 'Supervisor Manager'
+  3: 'Technician',
+  4: 'Inventory Manager',
+  5: 'Finance Officer',
+  6: 'Driver',
+  7: 'Supervisor'
 };
 
 export const ROLE_IDS = Object.freeze(Object.keys(ROLE_CATALOG).map(Number));

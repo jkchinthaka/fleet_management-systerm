@@ -26,48 +26,57 @@ const users = [
     name: 'Maintenance Tech',
     email: 'tech@fleet.com',
     password: '$2a$12$FwCBglb9uaGACZvmw14BvOu4PXqb9lCZ2upCd8SQeuJpZdObbo9xe',
-    roleId: 3, roleName: 'Maintenance Technician'
+    roleId: 3, roleName: 'Technician'
   },
   {
     name: 'Inventory Officer',
     email: 'inv@fleet.com',
     password: '$2a$12$9Hk6LjJRvpTiicfg8SpJV.MCzXs1faA3YwgVD0qmDlHUX66ThPoG6',
-    roleId: 4, roleName: 'Inventory Purchasing Officer'
+    roleId: 4, roleName: 'Inventory Manager'
   },
   {
     name: 'Finance Accountant',
     email: 'finance@fleet.com',
     password: '$2a$12$mgJxON3ZrRcsBHJfSugK6ewkaJEi2K945hgMapb6N3UJJfuc/k6v2',
-    roleId: 5, roleName: 'Finance Accountant'
+    roleId: 5, roleName: 'Finance Officer'
   },
   {
     name: 'Driver Employee',
     email: 'driver@fleet.com',
     password: '$2a$12$mvgjtqlCdUUCBGGdII6bQ.ggKTjrfY0bpOBNkFMfTaLHM.Unt4yly',
-    roleId: 6, roleName: 'Driver Employee'
+    roleId: 6, roleName: 'Driver'
   },
   {
     name: 'Supervisor Manager',
     email: 'super@fleet.com',
     password: '$2a$12$cRZuFg6GIvpS9ic3dH6Ieu/MZE79ImoPP./s4NvOVdGn05bd.ydR2',
-    roleId: 7, roleName: 'Supervisor Manager'
+    roleId: 7, roleName: 'Supervisor'
   },
 ];
 
 users.forEach(u => {
   const existing = db.users.findOne({ email: u.email });
-  if (!existing) {
-    db.users.insertOne({
-      name: u.name,
-      email: u.email,
-      password: u.password,
-      roleId: u.roleId,
-      roleName: u.roleName,
-      createdAt: new Date()
-    });
+  const updateResult = db.users.updateOne(
+    { email: u.email },
+    {
+      $set: {
+        name: u.name,
+        password: u.password,
+        roleId: u.roleId,
+        roleName: u.roleName,
+        updatedAt: new Date()
+      },
+      $setOnInsert: {
+        createdAt: new Date()
+      }
+    },
+    { upsert: true }
+  );
+
+  if (!existing && updateResult.upsertedId) {
     print('Seeded user: ' + u.email);
   } else {
-    print('User already exists: ' + u.email);
+    print('Updated user: ' + u.email);
   }
 });
 

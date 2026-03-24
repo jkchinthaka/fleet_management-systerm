@@ -50,11 +50,11 @@ console.log('Indexes created');
 await db.collection('users').insertMany([
   { id: 1, name: 'System Admin',       email: 'ta9@fleet.com',     password: '$2a$12$oT3xOUDpKMq4A7hTqxLOOeikHKpnfUKd8vmiJm4Ds24ou8s4QTp2q', roleId: 1, roleName: 'Admin',                         createdAt: new Date() },
   { id: 2, name: 'Fleet Manager',      email: 'fleet@fleet.com',   password: '$2a$12$.YGB6VoZ6Ke6DM8owKsoiuKGef2PiOwCcuCY..2aRswAGpAZFK/d2',  roleId: 2, roleName: 'Fleet Manager',               createdAt: new Date() },
-  { id: 3, name: 'Maintenance Tech',   email: 'tech@fleet.com',    password: '$2a$12$FwCBglb9uaGACZvmw14BvOu4PXqb9lCZ2upCd8SQeuJpZdObbo9xe',  roleId: 3, roleName: 'Maintenance Technician',      createdAt: new Date() },
-  { id: 4, name: 'Inventory Officer',  email: 'inv@fleet.com',     password: '$2a$12$9Hk6LjJRvpTiicfg8SpJV.MCzXs1faA3YwgVD0qmDlHUX66ThPoG6',  roleId: 4, roleName: 'Inventory Purchasing Officer', createdAt: new Date() },
-  { id: 5, name: 'Finance Accountant', email: 'finance@fleet.com', password: '$2a$12$mgJxON3ZrRcsBHJfSugK6ewkaJEi2K945hgMapb6N3UJJfuc/k6v2',  roleId: 5, roleName: 'Finance Accountant',          createdAt: new Date() },
-  { id: 6, name: 'Driver Employee',    email: 'driver@fleet.com',  password: '$2a$12$mvgjtqlCdUUCBGGdII6bQ.ggKTjrfY0bpOBNkFMfTaLHM.Unt4yly',  roleId: 6, roleName: 'Driver Employee',             createdAt: new Date() },
-  { id: 7, name: 'Supervisor Manager', email: 'super@fleet.com',   password: '$2a$12$cRZuFg6GIvpS9ic3dH6Ieu/MZE79ImoPP./s4NvOVdGn05bd.ydR2',  roleId: 7, roleName: 'Supervisor Manager',          createdAt: new Date() },
+  { id: 3, name: 'Maintenance Tech',   email: 'tech@fleet.com',    password: '$2a$12$FwCBglb9uaGACZvmw14BvOu4PXqb9lCZ2upCd8SQeuJpZdObbo9xe',  roleId: 3, roleName: 'Technician',                  createdAt: new Date() },
+  { id: 4, name: 'Inventory Officer',  email: 'inv@fleet.com',     password: '$2a$12$9Hk6LjJRvpTiicfg8SpJV.MCzXs1faA3YwgVD0qmDlHUX66ThPoG6',  roleId: 4, roleName: 'Inventory Manager',           createdAt: new Date() },
+  { id: 5, name: 'Finance Accountant', email: 'finance@fleet.com', password: '$2a$12$mgJxON3ZrRcsBHJfSugK6ewkaJEi2K945hgMapb6N3UJJfuc/k6v2',  roleId: 5, roleName: 'Finance Officer',             createdAt: new Date() },
+  { id: 6, name: 'Driver Employee',    email: 'driver@fleet.com',  password: '$2a$12$mvgjtqlCdUUCBGGdII6bQ.ggKTjrfY0bpOBNkFMfTaLHM.Unt4yly',  roleId: 6, roleName: 'Driver',                      createdAt: new Date() },
+  { id: 7, name: 'Supervisor Manager', email: 'super@fleet.com',   password: '$2a$12$cRZuFg6GIvpS9ic3dH6Ieu/MZE79ImoPP./s4NvOVdGn05bd.ydR2',  roleId: 7, roleName: 'Supervisor',                  createdAt: new Date() },
 ]);
 console.log('Users seeded (7)');
 
