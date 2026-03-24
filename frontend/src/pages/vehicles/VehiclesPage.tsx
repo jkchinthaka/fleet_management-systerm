@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '../../components/ui/button';
@@ -10,7 +9,6 @@ import { DataTable } from '../../components/common/DataTable';
 import { Card } from '../../components/ui/card';
 import { useVehicles } from '../../hooks/useVehicles';
 import { useVehicleDocuments } from '../../hooks/useVehicleDocuments';
-import { fuelApi } from '../../services/api/fuelApi';
 
 const schema = z.object({
   registration_number: z.string().min(3, 'Min 3 characters required'),
@@ -26,7 +24,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-type Tab = 'details' | 'fuel' | 'service' | 'documents';
+type Tab = 'details' | 'service' | 'documents';
 
 export const VehiclesPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,12 +33,6 @@ export const VehiclesPage = () => {
   const [tab, setTab] = useState<Tab>('details');
   const { list, create } = useVehicles();
   const { list: docList, create: docCreate, remove: docRemove } = useVehicleDocuments(selectedVehicleId);
-
-  const fuelQuery = useQuery({
-    queryKey: ['fuel-logs', 'vehicle', selectedVehicleId],
-    queryFn: () => fuelApi.list(String(selectedVehicleId)),
-    enabled: selectedVehicleId != null
-  });
 
   const docForm = useForm<{ document_type: string; document_number: string; expiry_date: string }>({
     defaultValues: { document_type: '', document_number: '', expiry_date: '' }
@@ -119,7 +111,7 @@ export const VehiclesPage = () => {
         {selectedVehicle && (
           <>
             <div className="mb-3 flex gap-2">
-              {(['details', 'fuel', 'service', 'documents'] as Tab[]).map((t) => (
+              {(['details', 'service', 'documents'] as Tab[]).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
@@ -139,25 +131,6 @@ export const VehiclesPage = () => {
                 <p><span className="font-medium">Branch:</span> {selectedVehicle.branch || '-'}</p>
                 <p><span className="font-medium">Last Service:</span> {selectedVehicle.last_service_date ? new Date(selectedVehicle.last_service_date).toLocaleDateString() : '-'}</p>
               </div>
-            )}
-
-            {tab === 'fuel' && (
-              <DataTable
-                isLoading={fuelQuery.isLoading}
-                isError={fuelQuery.isError}
-                columns={[
-                  { key: 'log_date', header: 'Date' },
-                  { key: 'fuel_quantity', header: 'Quantity (L)' },
-                  { key: 'cost', header: 'Cost (₹)' },
-                  { key: 'mileage', header: 'Mileage (km)' },
-                  { key: 'fuel_efficiency', header: 'Efficiency (km/L)' }
-                ]}
-                data={(fuelQuery.data || []).map((f) => ({
-                  ...f,
-                  log_date: new Date(f.log_date).toLocaleDateString(),
-                  fuel_efficiency: f.fuel_efficiency?.toFixed(2) ?? '-'
-                }))}
-              />
             )}
 
             {tab === 'service' && (

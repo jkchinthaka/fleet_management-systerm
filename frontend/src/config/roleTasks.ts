@@ -40,7 +40,7 @@ export const ROLE_TASKS_BY_ID: Record<number, RoleTaskDefinition> = {
   5: {
     roleName: 'Finance Officer',
     responsibilities: [
-      'Review utility and fuel cost records',
+      'Review utility and operational cost records',
       'Analyze spending trends',
       'Support financial reporting'
     ]

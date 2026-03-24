@@ -1,12 +1,10 @@
-import { Activity, Car, ReceiptIndianRupee, Wrench } from 'lucide-react';
+import { Car, ReceiptIndianRupee, Wrench } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { StatCard } from '../../components/common/StatCard';
 import { useDashboard } from '../../hooks/useDashboard';
 import { useAppStore } from '../../store/appStore';
 import { ROLE_TASKS_BY_ID } from '../../config/roleTasks';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -28,29 +26,13 @@ export const DashboardPage = () => {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard title="Total Vehicles" value={String(overview?.totalVehicles ?? 0)} icon={Car} />
-        <StatCard title="Total Fuel Consumption" value={`${overview?.totalFuelConsumption ?? 0} L`} icon={Activity} />
         <StatCard title="Monthly Expenses" value={`INR ${overview?.monthlyExpenses ?? 0}`} icon={ReceiptIndianRupee} />
         <StatCard title="Active Service Requests" value={String(overview?.activeServiceRequests ?? 0)} icon={Wrench} />
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <Card>
-          <h3 className="mb-4 text-lg font-semibold">Fuel Usage Trends</h3>
-          <div className="h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data?.charts.fuelTrend || []}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line dataKey="fuelQuantity" stroke="#365ff8" strokeWidth={3} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
         <Card>
           <h3 className="mb-4 text-lg font-semibold">Electricity vs Water</h3>
           <div className="h-[280px]">
@@ -63,6 +45,21 @@ export const DashboardPage = () => {
                 <Legend />
                 <Bar dataKey="electricity" fill="#2748db" />
                 <Bar dataKey="water" fill="#5f89ff" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card>
+          <h3 className="mb-4 text-lg font-semibold">Maintenance Cost Trends</h3>
+          <div className="h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data?.charts.maintenanceCostTrend || []}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="cost" fill="#365ff8" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -111,7 +108,7 @@ export const DashboardPage = () => {
               Role-based security and approvals that strengthen governance and audit readiness.
             </li>
             <li className="rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800">
-              Unified analytics that expose cost trends across fleet, fuel, and utilities.
+              Unified analytics that expose cost trends across fleet, utilities, and maintenance.
             </li>
           </ul>
         </Card>
@@ -121,7 +118,7 @@ export const DashboardPage = () => {
           <div className="space-y-2 text-sm text-[var(--muted)]">
             <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
               <p className="font-semibold text-slate-700 dark:text-slate-200">Fleet Operations</p>
-              <p>Track vehicles, fuel efficiency, service due dates, and driver activity in one place.</p>
+              <p>Track vehicles, service due dates, and driver activity in one place.</p>
             </div>
             <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
               <p className="font-semibold text-slate-700 dark:text-slate-200">Maintenance Teams</p>

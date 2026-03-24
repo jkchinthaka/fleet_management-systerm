@@ -3,7 +3,6 @@ import { AppLayout } from './layouts/AppLayout';
 import {
   DashboardPage,
   VehiclesPage,
-  FuelPage,
   UtilityPage,
   InventoryPage,
   MachineAssetPage,
@@ -12,7 +11,6 @@ import {
   LoginPage,
   ServicePage,
   UsersPage,
-  RefuelPage,
   CostLogPage,
   RemindersPage,
   AnalyticsPage
@@ -36,7 +34,6 @@ export default function App() {
         <Route element={<ProtectedOutlet />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/vehicles" element={<VehiclesPage />} />
-          <Route path="/fuel" element={<FuelPage />} />
           <Route path="/utility" element={<UtilityPage />} />
           <Route path="/inventory" element={<InventoryPage />} />
           <Route path="/machine-asset" element={<MachineAssetPage />} />
@@ -44,7 +41,6 @@ export default function App() {
           <Route path="/service" element={<ServicePage />} />
           <Route path="/users" element={roleId === 1 ? <UsersPage /> : <Navigate to="/" replace />} />
           <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/refuel" element={<RefuelPage />} />
           <Route path="/cost-logs" element={<CostLogPage />} />
           <Route path="/reminders" element={<RemindersPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
