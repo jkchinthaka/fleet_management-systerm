@@ -5,8 +5,15 @@
   "engines": {
     "node": ">=20"
   },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
   "scripts": {
-    "postinstall": "npm --prefix backend install --omit=dev",
-    "start": "npm --prefix backend start"
+    "postinstall": "npm --prefix backend install --omit=dev && npm --prefix frontend install",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix backend start",
+    "start:full": "npm run build && npm run start"
   }
 }

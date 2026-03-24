@@ -1,7 +1,10 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { fileURLToPath } from 'url';
 import { env } from './config/env.js';
 import { isDbConnected } from './config/db.js';
 import { apiRateLimiter } from './middleware/rateLimiter.js';
@@ -9,11 +12,16 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { buildRoutes } from './routes/index.js';
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const allowedOrigins = env.corsOrigin
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
-const apiPrefixes = Array.from(new Set([env.apiPrefix, '/api/v1', '/api']));
+const apiPrefixes = [env.apiPrefix];
+const frontendDistPath = path.resolve(__dirname, '../../frontend/dist');
+const frontendIndexPath = path.join(frontendDistPath, 'index.html');
+const shouldServeFrontend = env.nodeEnv === 'production' && fs.existsSync(frontendIndexPath);
 
 const corsOriginValidator = (origin, callback) => {
   // Allow non-browser clients and same-origin requests.
@@ -44,7 +52,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(apiRateLimiter);
 
-app.get('/', (_req, res) => {
+app.get(`${env.apiPrefix}/meta`, (_req, res) => {
   res.status(200).json({
     success: true,
     name: 'Fleet Management API',
@@ -68,6 +76,19 @@ app.get('/health', (_req, res) => {
 apiPrefixes.forEach((prefix) => {
   app.use(buildRoutes(prefix));
 });
+
+if (shouldServeFrontend) {
+  app.use(express.static(frontendDistPath, { index: false }));
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith(env.apiPrefix) || req.path === '/health') {
+      next();
+      return;
+    }
+
+    res.sendFile(frontendIndexPath);
+  });
+}
 
 app.use(notFoundHandler);
 app.use(errorHandler);
