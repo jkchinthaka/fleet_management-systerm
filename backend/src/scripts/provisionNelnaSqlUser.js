@@ -3,8 +3,8 @@ import sql from 'mssql';
 const adminConfig = {
   server: process.env.SQL_ADMIN_HOST || 'localhost',
   port: Number(process.env.SQL_ADMIN_PORT || 1433),
-  user: process.env.SQL_ADMIN_USER || 'sa',
-  password: process.env.SQL_ADMIN_PASSWORD || 'YourStrongPassword123!',
+  user: process.env.SQL_ADMIN_USER,
+  password: process.env.SQL_ADMIN_PASSWORD,
   options: {
     encrypt: true,
     trustServerCertificate: true
@@ -13,7 +13,7 @@ const adminConfig = {
 
 const appDbName = process.env.SQL_DB_NAME || 'NELNA_APP';
 const appUser = process.env.SQL_APP_USER || 'nelna_user';
-const appPassword = process.env.SQL_APP_PASSWORD || 'Nelna@123';
+const appPassword = process.env.SQL_APP_PASSWORD;
 
 const esc = (value) => String(value).replace(/'/g, "''");
 
@@ -22,6 +22,14 @@ const run = async () => {
   let appDb;
 
   try {
+    if (!adminConfig.user || !adminConfig.password) {
+      throw new Error('Missing SQL admin credentials. Set SQL_ADMIN_USER and SQL_ADMIN_PASSWORD.');
+    }
+
+    if (!appPassword) {
+      throw new Error('Missing SQL app user password. Set SQL_APP_PASSWORD.');
+    }
+
     master = await sql.connect({ ...adminConfig, database: 'master' });
 
     await master.request().query(`

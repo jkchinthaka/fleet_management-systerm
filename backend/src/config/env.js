@@ -4,14 +4,15 @@ dotenv.config();
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const jwtSecretRaw = process.env.JWT_SECRET || 'unsafe_default_change_me';
-const mongoUriFallback = 'mongodb+srv://fleetAdmin:USER@cluster0.gsqzhij.mongodb.net/Fleet_New?retryWrites=true&w=majority&appName=Cluster0';
-const mongoUri =
+const mongoUriFromEnv =
   process.env.MONGODB_URI ||
   process.env.MONGO_URI ||
   process.env.MONGODB_URL ||
   process.env.MONGO_URL ||
-  process.env.DATABASE_URL ||
-  mongoUriFallback;
+  process.env.DATABASE_URL;
+
+const mongoUriFallback = nodeEnv === 'development' ? 'mongodb://localhost:27017' : '';
+const mongoUri = mongoUriFromEnv || mongoUriFallback;
 
 if (!mongoUri) {
   throw new Error(
@@ -19,8 +20,8 @@ if (!mongoUri) {
   );
 }
 
-if (!process.env.MONGODB_URI && !process.env.MONGO_URI && !process.env.MONGODB_URL && !process.env.MONGO_URL && !process.env.DATABASE_URL) {
-  console.warn('[CONFIG] Mongo URI env var not found. Using fallback Atlas URI from application config.');
+if (!mongoUriFromEnv) {
+  console.warn('[CONFIG] Mongo URI env var not found. Using local fallback mongodb://localhost:27017 for development.');
 }
 
 const hasWeakJwtSecret = jwtSecretRaw === 'unsafe_default_change_me' || jwtSecretRaw === 'replace_with_long_secret';

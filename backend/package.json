@@ -23,6 +23,7 @@
     "express-rate-limit": "^7.4.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
+    "mssql": "^12.2.1",
     "mongoose": "^8.19.1",
     "morgan": "^1.10.0",
     "pdfkit": "^0.16.0",

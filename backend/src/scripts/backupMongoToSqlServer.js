@@ -6,8 +6,7 @@ dotenv.config();
 
 const MONGO_URI =
   process.env.MONGODB_URI ||
-  process.env.MONGO_URI ||
-  'mongodb+srv://fleetAdmin:USER@cluster0.gsqzhij.mongodb.net/?appName=Cluster0';
+  process.env.MONGO_URI;
 
 const MONGO_DB_NAME = process.env.MONGODB_DB_NAME || 'Fleet_New';
 const SQL_DATABASE = process.env.SQL_DB_NAME || process.env.DB_NAME || 'NELNA_APP';
@@ -16,9 +15,27 @@ const SQL_SCHEMA = process.env.SQL_BACKUP_SCHEMA || 'mongo_backup';
 const SQL_CONNECTION_STRING =
   process.env.SQLSERVER_CONNECTION_STRING ||
   process.env.SQL_CONNECTION_STRING ||
-  'Data Source=localhost,1433;Persist Security Info=True;User ID=nelna_user;Password=Nelna@123;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name="SQL Server Management Studio";Command Timeout=0';
+  '';
 
 const parseConnectionString = (connectionString) => {
+  if (!connectionString) {
+    return {
+      server: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT || 1433),
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      options: {
+        encrypt: String(process.env.DB_ENCRYPT || 'true').toLowerCase() === 'true',
+        trustServerCertificate: String(process.env.DB_TRUST_CERT || 'true').toLowerCase() === 'true'
+      },
+      pool: {
+        max: 10,
+        min: 0,
+        idleTimeoutMillis: 30000
+      }
+    };
+  }
+
   const map = {};
   connectionString
     .split(';')
@@ -131,6 +148,10 @@ const main = async () => {
   let pool;
 
   try {
+    if (!MONGO_URI) {
+      throw new Error('Missing Mongo URI. Provide MONGODB_URI or MONGO_URI.');
+    }
+
     console.log(`[1/4] Connecting to MongoDB: ${MONGO_DB_NAME}`);
     await mongoose.connect(MONGO_URI, { dbName: MONGO_DB_NAME, serverSelectionTimeoutMS: 30000 });
     const mongoDb = mongoose.connection.db;
