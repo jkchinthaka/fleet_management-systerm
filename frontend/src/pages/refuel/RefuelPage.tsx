@@ -44,6 +44,7 @@ type FormData = z.infer<typeof schema>;
 export const RefuelPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [vehicleSearch, setVehicleSearch] = useState('');
   const roleId = useAppStore((s) => s.roleId);
   const canApprove = roleId === 1 || roleId === 7;
   const { list, create, approve, remove } = useRefuel();
@@ -71,6 +72,17 @@ export const RefuelPage = () => {
     return Object.values(map).sort((a, b) => a.date.localeCompare(b.date));
   }, [list.data]);
 
+  const filteredVehicleOptions = useMemo(() => {
+    const keyword = vehicleSearch.trim().toLowerCase();
+    if (!keyword) {
+      return vehicleOptions;
+    }
+
+    return vehicleOptions.filter((vehicle) =>
+      String(vehicle.registration_number || '').toLowerCase().includes(keyword)
+    );
+  }, [vehicleOptions, vehicleSearch]);
+
   const onSubmit = form.handleSubmit(async (values) => {
     const payload = { ...values, ...(photo ? { photo } : {}) };
 
@@ -81,11 +93,13 @@ export const RefuelPage = () => {
     await create.mutateAsync(payload);
     form.reset({ log_date: todayISO(), fuel_type: 'Diesel', full_tank: false });
     setPhoto(null);
+    setVehicleSearch('');
     setIsOpen(false);
   });
 
   const openCreateModal = async () => {
     await vehicles.refetch();
+    setVehicleSearch('');
     setIsOpen(true);
   };
 
@@ -181,6 +195,18 @@ export const RefuelPage = () => {
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add Refuel Log">
         <form className="space-y-3" onSubmit={onSubmit}>
+          <div>
+            <Input
+              type="text"
+              placeholder="Search vehicle number"
+              value={vehicleSearch}
+              onChange={(e) => setVehicleSearch(e.target.value)}
+            />
+            <p className="mt-1 text-xs text-[var(--muted)]">
+              {filteredVehicleOptions.length} vehicle(s) match your search.
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <select
@@ -188,7 +214,7 @@ export const RefuelPage = () => {
                 {...form.register('vehicle_id', { valueAsNumber: true })}
               >
                 <option value="">Select vehicle *</option>
-                {vehicleOptions.map((vehicle) => (
+                {filteredVehicleOptions.map((vehicle) => (
                   <option key={vehicle.id} value={vehicle.id}>
                     {vehicle.registration_number} (ID: {vehicle.id})
                   </option>
